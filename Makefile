@@ -1,5 +1,7 @@
+OPTFLAGS=-lm
+OPTLIBS=-lm
 CFLAGS=-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
-LIBS=-ldl -lm $(OPTLIBS)
+LIBS=-ldl -lm
 PREFIX?=/usr/local
 
 SOURCES=$(wildcard src/**/*.c src/*.c)
@@ -24,7 +26,7 @@ $(TARGET): build $(OBJECTS)
 		ranlib $@
 
 $(SO_TARGET): $(TARGET) $(OBJECTS)
-		$(CC) -shared -o $@ $(OBJECTS)
+		$(CC) $(CFLAGS) -shared -o $@ $(OBJECTS)
 
 $(BINARY): $(SO_TARGET)
 	$(CC) $(CFLAGS) -v -o build/$(BINARY) $(TARGET)
