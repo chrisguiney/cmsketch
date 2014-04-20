@@ -24,10 +24,10 @@ $(TARGET): build $(OBJECTS)
 		ranlib $@
 
 $(SO_TARGET): $(TARGET) $(OBJECTS)
-		$(CC) $(CFLAGS) -shared -o $@ $(LIBS) $(OBJECTS)
+		$(CC) $(CFLAGS) -shared -o $@ $(OBJECTS) $(LIBS)
 
 $(BINARY): $(SO_TARGET)
-	$(CC) $(CFLAGS) -v -o build/$(BINARY) $(LIBS) $(TARGET)
+	$(CC) $(CFLAGS) -v -o build/$(BINARY) $(TARGET) $(LIBS)
 
 build:
 		@mkdir -p build
