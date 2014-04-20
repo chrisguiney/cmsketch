@@ -18,13 +18,13 @@ all: $(TARGET) $(SO_TARGET) $(BINARY) tests
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
 
-$(TARGET): CFLAGS += -fPIC $(LIBS)
+$(TARGET): CFLAGS += -fPIC 
 $(TARGET): build $(OBJECTS)
 		ar rcs $@ $(OBJECTS)
 		ranlib $@
 
 $(SO_TARGET): $(TARGET) $(OBJECTS)
-		$(CC) $(CFLAGS) -shared -o $@ $(OBJECTS)
+		$(CC) $(CFLAGS) -shared -o $(LIBS) $@ $(OBJECTS)
 
 $(BINARY): $(SO_TARGET)
 	$(CC) $(CFLAGS) -v -o build/$(BINARY) $(TARGET)
