@@ -1,5 +1,3 @@
-OPTFLAGS=-lm
-OPTLIBS=-lm
 CFLAGS=-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
 LIBS=-ldl -lm
 PREFIX?=/usr/local
@@ -26,10 +24,10 @@ $(TARGET): build $(OBJECTS)
 		ranlib $@
 
 $(SO_TARGET): $(TARGET) $(OBJECTS)
-		$(CC) $(CFLAGS) -shared -o $@ $(OBJECTS)
+		$(CC) $(CFLAGS) -shared -o $@ $(LIBS) $(OBJECTS)
 
 $(BINARY): $(SO_TARGET)
-	$(CC) $(CFLAGS) -v -o build/$(BINARY) $(TARGET)
+	$(CC) $(CFLAGS) -v -o build/$(BINARY) $(LIBS) $(TARGET)
 
 build:
 		@mkdir -p build
