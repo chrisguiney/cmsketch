@@ -1,4 +1,4 @@
-install: make get-deps
+install: make all
 language: c
 compiler:
   - clang
