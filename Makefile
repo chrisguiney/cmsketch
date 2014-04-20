@@ -24,7 +24,7 @@ $(TARGET): build $(OBJECTS)
 		ranlib $@
 
 $(SO_TARGET): $(TARGET) $(OBJECTS)
-		$(CC) $(CFLAGS) -shared -o $(LIBS) $@ $(OBJECTS)
+		$(CC) $(CFLAGS) -shared $(LIBS) -o $@ $(OBJECTS)
 
 $(BINARY): $(SO_TARGET)
 	$(CC) $(CFLAGS) -v -o build/$(BINARY) $(TARGET)
