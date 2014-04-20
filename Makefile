@@ -27,7 +27,7 @@ $(SO_TARGET): $(TARGET) $(OBJECTS)
 		$(CC) $(CFLAGS) -shared $(LIBS) -o $@ $(OBJECTS)
 
 $(BINARY): $(SO_TARGET)
-	$(CC) $(CFLAGS) -v -o build/$(BINARY) $(TARGET)
+	$(CC) $(CFLAGS) -v $(LIBS) -o build/$(BINARY) $(TARGET)
 
 build:
 		@mkdir -p build
