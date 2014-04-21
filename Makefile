@@ -1,4 +1,4 @@
-CFLAGS=-std=c99 -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG -v $(OPTFLAGS)
+CFLAGS=-std=c99 -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
 LIBS=-ldl -lm
 PREFIX?=/usr/local
 
@@ -13,21 +13,21 @@ SO_TARGET=$(patsubst %.a,%.so,$(TARGET))
 
 BINARY=cmsketch
 # The Target Build
-all: $(TARGET) $(SO_TARGET) $(BINARY) tests
+all: $(SO_TARGET) $(BINARY) tests
 
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
 
-$(TARGET): CFLAGS += -fPIC 
-$(TARGET): build $(OBJECTS)
-		ar rcs $@ $(OBJECTS)
-		ranlib $@
+#$(TARGET): CFLAGS += -fPIC 
+#$(TARGET): build $(OBJECTS)
+#		ar rcs $@ $(OBJECTS)
+#		ranlib $@
 
-$(SO_TARGET): $(TARGET) $(OBJECTS)
+$(SO_TARGET): build $(OBJECTS)
 		$(CC) $(CFLAGS) -shared $(LIBS) -o $@ $(OBJECTS)
 
-$(BINARY): $(TARGET)
-	$(CC) $(CFLAGS) -v -o build/$(BINARY) $(LIBS) $(TARGET)
+$(BINARY): $(SO_TARGET)
+	$(CC) $(CFLAGS) -v -o build/$(BINARY) $(LIBS) $(SO_TARGET)
 
 build:
 		@mkdir -p build
@@ -35,7 +35,7 @@ build:
 
 # The Unit Tests
 .PHONY: tests
-tests: CFLAGS += $(TARGET)
+tests: CFLAGS += $(SO_TARGET)
 tests: $(TESTS)
 		sh ./tests/runtests.sh
 
