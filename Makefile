@@ -1,4 +1,4 @@
-CFLAGS=-std=c99 -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG -pandantic $(OPTFLAGS)
+CFLAGS=-std=c99 -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG -v $(OPTFLAGS)
 LIBS=-ldl -lm
 PREFIX?=/usr/local
 
@@ -26,11 +26,10 @@ $(TARGET): build $(OBJECTS)
 $(SO_TARGET): $(TARGET) $(OBJECTS)
 		$(CC) $(CFLAGS) -shared $(LIBS) -o $@ $(OBJECTS)
 
-$(BINARY): $(SO_TARGET)
-	$(CC) $(CFLAGS) -v $(LIBS) -o build/$(BINARY) $(SO_TARGET)
+$(BINARY): $(TARGET)
+	$(CC) $(CFLAGS) -v -o build/$(BINARY) $(LIBS) $(TARGET)
 
 build:
-	    echo "BUILD PHASE"
 		@mkdir -p build
 		@mkdir -p bin
 
