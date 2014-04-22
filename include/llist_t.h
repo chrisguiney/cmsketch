@@ -7,7 +7,7 @@
 //
 #ifndef cmsketch_llist_t_h
 #define cmsketch_llist_t_h
-typedef struct {
+typedef struct llist_node_t {
 	void* value;
 	struct llist_node_t* next;
 } llist_node_t;
