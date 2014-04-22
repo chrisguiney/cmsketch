@@ -8,8 +8,7 @@
 
 #ifndef cmsketch_heap_t_h
 #define cmsketch_heap_t_h
-
-typedef int (*comparator) (void* item, void* item2);
+#include "adt.h"
 
 typedef struct {
     comparator cmp;                                   // Comparator function

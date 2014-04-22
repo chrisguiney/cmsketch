@@ -12,14 +12,8 @@
 #include "../include/dbg.h"
 
 /*
- * create a new heap...on the heap
+ * Swap twp items in the heap
  */
-
-int local_int_cmp_asc(void* a, void* b) {
-    return (int) a - (int) b;
-}
-
-
 void heap_swap(heap_t* heap, int a, int b) {
     check(a <= heap->size, "Heap position out of range");
     check(b <= heap->size, "Heap position out of range");
@@ -77,7 +71,7 @@ void heap_clear(heap_t* heap) {
 }
 
 /*
- * Deallocate a heap heap
+ * Deallocate a heap
  */
 void heap_destroy(heap_t* heap){
     if(heap) {
@@ -218,8 +212,7 @@ void* heap_pushpop(heap_t* heap, void* item) {
     // If the heap is empty, we can just return item
     if(heap->items == 0) {
         return item;
-    }
-    
+    }  
     
     int cmp = heap->cmp(item, heap->list[0]);
     
