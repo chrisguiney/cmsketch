@@ -1,3 +1,6 @@
+.DS_Store
+tests/*tests
+tests/*.dSYM/
 tests/heap_t_tests.dSYM/
 build/
 tests/tests.log
