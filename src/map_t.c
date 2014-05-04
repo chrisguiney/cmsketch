@@ -93,7 +93,7 @@ map_t* map_create_simple(float load_factor, size_t key_size, comparator cmp, dto
 
 map_entry_t* map_create_entry(uint32_t hash, void* key, void* value)
 {
-	map_entry_t* entry = malloc(sizeof(map_entry_t));
+	map_entry_t* entry = calloc(1, sizeof(map_entry_t));
 	check_mem(entry);
 
 	entry->hash = hash;

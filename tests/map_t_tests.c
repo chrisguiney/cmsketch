@@ -94,7 +94,7 @@ char* test_set_get() {
 
 char* test_delete()
 {
-	char key[] = "foo\0";
+	char key[] = "foo";
 	char key2[] = "bar";
 	char key3[] = "baz";
 	int val = 10;
