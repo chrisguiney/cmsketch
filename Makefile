@@ -1,4 +1,4 @@
-CFLAGS=-std=c99 -g -O2 -Wall -Wextra -fPIC -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
+CFLAGS=-std=c99 -g -O2 -Wall -Wextra -fPIC -Isrc -DNDEBUG $(OPTFLAGS)
 LIBS=-ldl -lm
 PREFIX?=/usr/local
 
@@ -48,6 +48,7 @@ clean:
 		rm -f tests/tests.log
 		find . -name "*.gc*" -exec rm {} \;
 		rm -rf `find . -name "*.dSYM" -print`
+		rm -rf `find . -name "callgrind.out.*" -print`
 
 # The Install
 install: all

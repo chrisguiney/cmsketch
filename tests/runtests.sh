@@ -1,3 +1,4 @@
+VALGRIND="valgrind -v -v --log-file=tests/valgrind.log"
 echo "Running unit tests:"
 
 for i in tests/*_tests

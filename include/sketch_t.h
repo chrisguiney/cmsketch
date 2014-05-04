@@ -10,18 +10,14 @@
 #define cmsketch_sketch_t_h
 
 typedef struct {
-    int k;        // Number of top-k items to keep track of
-    int width;    // Width of field
-    int depth;    // Depth of field
-    int *field;   // Int field -- width * depth length
-    heap_t *heap; // Heap for sorting
+	int	k;	// Number of top-k items to keep track of
+	int	width;	// Width of field
+	int	depth;	// Depth of field
+	int	*field;	// Int field -- width * depth length
+	heap_t	*heap;	// Heap for sorting
 } sketch_t;
 
-sketch_t* sketch_create(size_t data_size,
-                        double delta,
-                        double epsilon,
-                        int k,
-                        comparator cmp);
+sketch_t* sketch_create(size_t data_size, double delta, double epsilon, int k, comparator cmp);
 void sketch_destroy(sketch_t *s);
 
 #endif

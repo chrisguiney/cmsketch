@@ -11,11 +11,11 @@
 #include "adt.h"
 
 typedef struct {
-    comparator cmp;                                   // Comparator function
-    int size;                                         // Max size
-    int items;                                        // Items currently in heap
-    size_t item_size;                                 // Size of item
-    void **list;                                      // Array of items
+	comparator	cmp;		// Comparator function
+	int		size;		// Max size
+	int		items;		// Items currently in heap
+	size_t		item_size;	// Size of item
+	void**		list;		// Array of items
 } heap_t;
 
 heap_t* heap_create(int size, size_t type_size, comparator cmp);

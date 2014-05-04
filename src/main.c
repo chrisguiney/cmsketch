@@ -10,24 +10,24 @@
 #include "../include/sketch_t.h"
 #include "../include/dbg.h"
 int int_cmp_asc(void* a, void* b) {
-    return (int) a - (int) b;
+	return (int) a - (int) b;
 }
 
 int main(int argc, const char * argv[])
 {
 
-    printf("Starting\n");
-    sketch_t *s = sketch_create(sizeof(int), 0.5, 0.5, 1.0, int_cmp_asc);
-    
-    if(s == NULL) {
-        printf("Error creating sketch");
-        return 1;
-    }
-    
-    sketch_destroy(s);
-    
-    // insert code here...
-    printf("Hello, World!\n");
-    return 0;
+	printf("Starting\n");
+	sketch_t *s = sketch_create(sizeof(int), 0.5, 0.5, 1.0, int_cmp_asc);
+	
+	if(s == NULL) {
+		printf("Error creating sketch");
+		return 1;
+	}
+	
+	sketch_destroy(s);
+	
+	// insert code here...
+	printf("Hello, World!\n");
+	return 0;
 }
 
