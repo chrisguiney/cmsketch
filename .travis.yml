@@ -1,4 +1,6 @@
-install: make all
+install:
+  -DEBIAN_FRONTEND=noninteractive sudo apt-get install valgrind
+  -make all
 language: c
 compiler:
   - clang
