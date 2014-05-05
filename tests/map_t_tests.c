@@ -42,6 +42,8 @@ char* test_create() {
 
 	mu_assert(map != NULL, "Map is NULL");
 
+	map_destroy(map);
+
 	return NULL;
 }
 
@@ -74,7 +76,7 @@ char* test_default_hasher() {
 		h2 = map->hash(str2, strlen(str2));
 		mu_assert(h1 != h2, "strings: Hash one and hash two were equal");
 	}
-
+	map_destroy(map);
 	return NULL;
 }
 
@@ -83,12 +85,17 @@ char* test_set_get() {
 	int key = 1234;
 	char value[] = "Foo";
 
+	int key2 = 5678;
+	char value2[] = "bar123";
+
 	map_put(map, (void*) &key, (void*) value);
+	map_put(map, (void*) &key2, (void*) value2);
 
 	char* out_value = (char*) map_get(map, &key);
 
 	debug("Out value: %s", out_value);
 
+	map_destroy(map);
 	return NULL;
 }
 
@@ -122,7 +129,9 @@ char* test_delete()
 	mu_assert(*retval2 == val2, "Return val 2 does not match initial value 2");
 
 	mu_assert(should_be_null == NULL, "Item was not successfully deleted from map");
-	log_err("At end of tests");
+	
+	map_destroy(map);
+
 	return NULL;
 }
 
