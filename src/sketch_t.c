@@ -31,7 +31,7 @@ sketch_t* sketch_create(size_t data_size, double delta, double epsilon, int k, c
 	s->depth = (int) ceil(log(1 / delta));
 	s->k = k;
 	s->field = calloc(1, (sizeof(int) * s->width) * sizeof(int) * s->depth);
-	s->heap = heap_create(k, data_size, cmp);
+	s->heap = heap_create(k, data_size, cmp, NULL);
 	return s;
 	
 	error:

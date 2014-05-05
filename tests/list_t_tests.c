@@ -5,6 +5,7 @@
 
 char* test_create() {
 	llist_t* list = llist_create(NULL);
+	log_err("list address: %p", list);
 	mu_assert(list != NULL, "Failed to create list");
 	mu_assert(list->size == 0, "Initial size of list is not zero");
 	llist_destroy(list);
@@ -12,15 +13,16 @@ char* test_create() {
 }
 
 char* test_push() {
-	uintptr_t val = 5;
+	uint32_t val = 5;
 	llist_t* list = llist_create(NULL);
-	llist_push(list, (void*) val);
+	llist_push(list, (void*) &val);
+
 	mu_assert(list->size == 1, "List size did not increment");
 	mu_assert(list->head != NULL, "List head did not get properly assigned");
 
-	uintptr_t out_value = (uintptr_t) list->head->value;
+	uint32_t* out_value = (uint32_t*) list->head->value;
 
-	mu_assert(val == out_value, "Stored wrong value in list node");
+	mu_assert(val == *out_value, "Stored wrong value in list node");
 	llist_destroy(list);
 	return NULL;
 }
@@ -42,7 +44,7 @@ char* test_pop() {
 		debug("Popped %lu", j);
 		mu_assert(j == (9 - i), "List item came out in wrong order");
 	}
-
+	mu_assert(list->size == 0, "List size was not 0");
 	llist_destroy(list);
 	return NULL;
 }
