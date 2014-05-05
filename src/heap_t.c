@@ -29,7 +29,7 @@ error:
 /*
  * Create a new fixed size heap.
  */
-heap_t* heap_create(int size, size_t type_size, comparator cmp)
+heap_t* heap_create(int size, size_t type_size, comparator cmp, dtor destructor)
 {
 	heap_t* h = NULL;
 	
@@ -43,6 +43,7 @@ heap_t* heap_create(int size, size_t type_size, comparator cmp)
 	h->items = 0;
 	h->size = size;
 	h->item_size = type_size;
+	h->destructor = destructor;
 	h->list = calloc(1, type_size * size);
 
 	check_mem(h->list);
@@ -61,14 +62,18 @@ error:
 /*
  * Decallocate every item in the heap.
  */
-void heap_clear(heap_t* heap)
+void heap_clear(heap_t* h)
 {
 	int i = 0;
-	if(heap->items > 0) {
-		for(i = 0; i < heap->size; i++) {
-			if(heap->list[i] != NULL) {
-				free(heap->list[i]);
+	if(h->items <= 0) {
+		return;
+	}
+	for(i = 0; i < h->size; i++) {
+		if(h->list[i] != NULL) {
+			if(h->destructor != NULL) {
+				h->destructor(h->list[i]);
 			}
+			h->list[i] = NULL;
 		}
 	}
 }
@@ -76,22 +81,24 @@ void heap_clear(heap_t* heap)
 /*
  * Deallocate a heap
  */
-void heap_destroy(heap_t* heap)
+void heap_destroy(heap_t* h)
 {
-	if(heap != NULL) {
-		if(heap->list != NULL) {
-			free(heap->list);
-		}
-		free(heap);
+	if(h == NULL) {
+		return;
 	}
+	if(h->list != NULL) {
+		heap_clear(h);
+		free(h->list);
+	}
+	free(h);
 }
 
 /*
  * Return the index of the items parent
  */
-int heap_parent(const heap_t* heap, const int pos) {
+int heap_parent(const heap_t* h, const int pos) {
 	check(pos >= 0, "Heap position must be greater than 0");
-	check(pos < heap->items, "Heap position is out of range");
+	check(pos < h->items, "Heap position is out of range");
 	return (pos - 1) / 2;
 	
 error:
@@ -101,15 +108,15 @@ error:
 /*
  * Determine if the element at pos is a leaf node
  */
-bool heap_leaf(heap_t* heap, int pos) {
-	return (pos >= heap->items / 2) && (pos < heap->items);
+bool heap_leaf(heap_t* h, int pos) {
+	return (pos >= h->items / 2) && (pos < h->items);
 }
 
 /*
  * Get the index of the left child of element at pos
  */
-int heap_left(heap_t* heap, int pos) {
-	check(pos < heap->items, "Heap position is out of range");
+int heap_left(heap_t* h, int pos) {
+	check(pos < h->items, "Heap position is out of range");
 	return (2 * pos) + 1;
 	
 error:
@@ -119,8 +126,8 @@ error:
 /*
  * Get index of the right child of element at pos
  */
-int heap_right(heap_t* heap, int pos) {
-	check(pos < heap->items, "Heap position is out of range");
+int heap_right(heap_t* h, int pos) {
+	check(pos < h->items, "Heap position is out of range");
 	return (2 * pos) + 2;
 	
 error:
@@ -130,21 +137,21 @@ error:
 /*
  * Move element at pos to its correct position within the heap
  */
-void heap_sift(heap_t* heap, int pos) {
+void heap_sift(heap_t* h, int pos) {
 	int j;
-	while(!heap_leaf(heap, pos)) {
-		j = heap_left(heap, pos);
+	while(!heap_leaf(h, pos)) {
+		j = heap_left(h, pos);
 
-		if((j < heap->items - 1) &&
-		   (heap->cmp(heap->list[j], heap->list[j+1]) > 0)) {
+		if((j < h->items - 1) &&
+		   (h->cmp(h->list[j], h->list[j+1]) > 0)) {
 			j++;
 		}
 
-		if(heap->cmp(heap->list[pos], heap->list[j]) <= 0) {
+		if(h->cmp(h->list[pos], h->list[j]) <= 0) {
 			return;
 		}
 
-		heap_swap(heap, pos, j);
+		heap_swap(h, pos, j);
 		pos = j;
 	}
 }

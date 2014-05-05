@@ -7,15 +7,14 @@ int int_cmp_asc(void* a, void* b) {
 }
 
 char* test_create() {
-	heap_t* heap = heap_create(10, sizeof(int), int_cmp_asc);
+	heap_t* heap = heap_create(10, sizeof(int), int_cmp_asc, NULL);
 	mu_assert(heap != NULL, "Failed to create heap");
-	heap_clear(heap);
 	heap_destroy(heap);
 	return NULL;
 }
 
 char* test_heap_push() {
-	heap_t* heap = heap_create(10, sizeof(int), int_cmp_asc);
+	heap_t* heap = heap_create(10, sizeof(int), int_cmp_asc, NULL);
 	mu_assert(heap != NULL, "Failed to create heap");
 
     heap_push(heap, (void*) 5);
@@ -38,7 +37,7 @@ char* test_heap_push() {
 }
 
 char* test_heap_pushpop() {
-	heap_t* heap = heap_create(10, sizeof(int), int_cmp_asc);
+	heap_t* heap = heap_create(10, sizeof(int), int_cmp_asc, NULL);
 	debug("Pushpop 4: %d", (int) heap_pushpop(heap, (void*) 4));
     heap_push(heap, (void*) 1);
     heap_push(heap, (void*) 2);
@@ -57,6 +56,7 @@ char* test_heap_pushpop() {
     	n = (int) heap_pop(heap);
     	mu_assert(n == i, "Incorrect value popped off the heap");
     }
+    heap_destroy(heap);
     return NULL;
 }
 
