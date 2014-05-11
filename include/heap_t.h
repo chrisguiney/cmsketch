@@ -12,13 +12,17 @@
 
 typedef struct {
 	comparator	cmp;		// Comparator function
-	int		size;		// Max size
-	int		items;		// Items currently in heap
+	int			size;		// Max size
+	int			items;		// Items currently in heap
+	dtor		destructor;	// Function to free items
 	size_t		item_size;	// Size of item
 	void**		list;		// Array of items
 } heap_t;
 
-heap_t* heap_create(int size, size_t type_size, comparator cmp);
+heap_t* heap_create(int size,
+					size_t type_size,
+					comparator cmp,
+					dtor destructor);
 void heap_clear(heap_t* heap);
 void heap_destroy(heap_t* heap);
 void heap_push(heap_t* heap, void* item);

@@ -17,6 +17,42 @@
 #define DEFAULT_BUCKET_COUNT 1
 #define DEFAULT_HASHER djb2
 
+void map_entry_destroy(map_entry_t* entry)
+{
+	if(entry != NULL) {
+		free(entry);
+	}
+}
+
+void map_bucket_destroy(map_t* map, llist_t* bucket)
+{
+	llist_node_t* node = NULL;
+	map_entry_t* entry = NULL;
+	node = bucket->head;
+	while(node != NULL) {
+		entry = (map_entry_t*) node->value;
+		if(map->destructor != NULL) {
+			map->destructor(entry->value);
+		}
+		map_entry_destroy(entry);
+		node->value = NULL;
+		node = node->next;
+	}
+	llist_destroy(bucket);
+}
+
+void map_destroy(map_t* map)
+{
+	int i;
+	if(map->buckets != NULL) {
+		for(i = 0; i < map->num_buckets; i++) {
+			map_bucket_destroy(map, map->buckets[i]);
+		}
+		free(map->buckets);
+	}
+	free(map);
+}
+
 map_t* map_create(float load_factor,
 		  size_t key_size,
 		  int initial_bucket_count,
@@ -32,7 +68,7 @@ map_t* map_create(float load_factor,
 	map_t* map = NULL;
 
 	map = malloc(sizeof(map_t));
-	map->num_buckets = DEFAULT_BUCKET_COUNT;
+	map->num_buckets = initial_bucket_count;
 	map->num_entries = 0;
 	map->load_factor = load_factor;
 	map->key_size = key_size;
@@ -41,11 +77,11 @@ map_t* map_create(float load_factor,
 	map->destructor = destructor;
 	check_mem(map);
 
-	map->buckets = calloc(DEFAULT_BUCKET_COUNT, sizeof(llist_t));
+	map->buckets = calloc(initial_bucket_count, sizeof(llist_t));
 	check_mem(map->buckets);
 
-	for(int i = 0; i < DEFAULT_BUCKET_COUNT; i++) {
-		map->buckets[i] = llist_create(map->destructor);
+	for(int i = 0; i < initial_bucket_count; i++) {
+		map->buckets[i] = llist_create(NULL);
 	}
 
 	return map;
@@ -53,9 +89,13 @@ map_t* map_create(float load_factor,
 error:
 	if(map != NULL) {
 		if(map->buckets != NULL) {
-			for(int i = 0; i < DEFAULT_BUCKET_COUNT; i++) {
-				llist_destroy(map->buckets[i]);
-			}
+			int i;
+			for(i = 0; i < initial_bucket_count; i++) {
+				if(map->buckets[i] != NULL) {
+					llist_destroy(map->buckets[i]);
+				}
+			} 
+			free(map->buckets);
 		}
 		free(map);
 	}
@@ -75,7 +115,7 @@ map_t* map_create_simple(float load_factor, size_t key_size, comparator cmp, dto
 
 map_entry_t* map_create_entry(uint32_t hash, void* key, void* value)
 {
-	map_entry_t* entry = malloc(sizeof(map_entry_t));
+	map_entry_t* entry = calloc(1, sizeof(map_entry_t));
 	check_mem(entry);
 
 	entry->hash = hash;
@@ -91,16 +131,16 @@ error:
 	return NULL;
 }
 
-void map_entry_destroy(map_entry_t* entry) {
-	if(entry != NULL) {
-		free(entry);
-	}
-}
+
 
 llist_t* map_get_bucket(map_t* map, void* key, uint32_t hash)
 {
+	check(map, "Map was null");
+	check(map->buckets, "buckets was not properly assigned");
+
 	int bucket_number = hash % map->num_buckets;
 	check(bucket_number >= 0, "Bucket out of range");
+	check(map->buckets[bucket_number], "Requested bucket is NULL");
 
 	return map->buckets[bucket_number];
 
@@ -116,17 +156,12 @@ map_entry_t* map_find_entry(
 {
 	llist_node_t* node = bucket->head;
 	map_entry_t* entry = NULL;
-	log_err("Address of bucket->head: %p", bucket->head);
 	while(node != NULL) {
-		log_err("iterating on  node");
 		entry = (map_entry_t*) node->value;
-		log_err("attempting comparison");
 		if(entry->hash == hash &&
 			map->cmp(entry->key, key) == 0) {
-			log_err("Found entry");
 			return entry;
 		}
-		log_err("Moving from %p to next, %p", node, node->next);
 		node = node->next;
 	}
 
@@ -136,8 +171,8 @@ map_entry_t* map_find_entry(
 
 void map_put(map_t* map, void* key, void* value)
 {
-	uint64_t hash = map->hash(key, map->key_size);
 
+	uint32_t hash = map->hash(key, map->key_size);
 	llist_t* bucket = map_get_bucket(map, key, hash);
 	check(bucket, "Error obtaining hash bucket");
 
@@ -158,12 +193,13 @@ void* map_get(map_t* map, void* key)
 	uint32_t hash = map->hash(key, map->key_size);
 	llist_t* bucket = map_get_bucket(map, key, hash);
 
+	check(bucket, "Error obtaining hash bucket");
+
 	if(bucket == NULL) {
 		log_err("Bucket is null");
 		return NULL;
 	}
 
-	log_err("Bucket is not null");
 	map_entry_t* entry = map_find_entry(map, bucket, key, hash);
 
 	if(entry == NULL) {
@@ -171,6 +207,8 @@ void* map_get(map_t* map, void* key)
 	}
 
 	return entry;
+error:
+	return NULL;
 }
 
 void* map_delete(map_t* map, void* key)
@@ -200,16 +238,19 @@ void* map_delete(map_t* map, void* key)
 		entry = (map_entry_t*) node->value;
 		if(entry->hash == hash &&
 			map->cmp(entry->key, key) == 0) {
+
 			void* data = entry->value;
+			
 			(*prev) = node->next;
 			bucket->size--;
+			
 			llist_node_destroy(node);		
 			map_entry_destroy(entry);
 			return data;
 		}
-		log_err("no match, continuing");
 		prev = &(*prev)->next;
 		node = node->next;
 	}
 	return NULL;
 }
+

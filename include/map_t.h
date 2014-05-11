@@ -38,5 +38,6 @@ map_t* map_create_simple(float load_factor, size_t key_size, comparator cmp, dto
 void map_put(map_t* map, void* key, void* value);
 void* map_get(map_t* map, void* key);
 void* map_delete(map_t* map, void* key);
-void* map_delete(map_t* map, void* key);
+void map_destroy(map_t* map);
+
 #endif

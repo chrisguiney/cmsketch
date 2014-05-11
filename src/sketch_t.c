@@ -52,8 +52,7 @@ sketch_t* sketch_create(size_t data_size, double delta, double epsilon, int k, c
 	s->field = calloc(1, (sizeof(long) * s->width) * (sizeof(long) * s->depth));
 	s->heap = heap_create(k, data_size, sketch_cmp);
 	s->top_k = map_create_simple(0.75, sizeof(sketch_str), sketch_cmp, NULL);
-	return s;
-	
+
 	check_mem(s->hashes);
 	check_mem(s->field);
 	check_mem(s->heap);
@@ -64,6 +63,8 @@ sketch_t* sketch_create(size_t data_size, double delta, double epsilon, int k, c
 	for(i = 0; i < s->depth * 2; i++) {
 		s->field[i] = random();
 	}
+
+	return s;
 
 	error:
 		return NULL;

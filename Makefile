@@ -1,4 +1,4 @@
-CFLAGS=-std=c99 -g -O2 -Wall -Wextra -fPIC -Isrc -DNDEBUG $(OPTFLAGS)
+CFLAGS=-std=c99 -g -O0 -Wall -Wextra -fPIC -Isrc -DNDEBUG $(OPTFLAGS)
 LIBS=-ldl -lm
 PREFIX?=/usr/local
 
@@ -15,7 +15,7 @@ BINARY=cmsketch
 # The Target Build
 all: $(SO_TARGET) $(BINARY) tests
 
-dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
+dev: CFLAGS=-DNDEBUG -g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
 
 #$(TARGET): CFLAGS += -fPIC 
