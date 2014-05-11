@@ -16,13 +16,13 @@ typedef struct {
 	int	k;	// Number of top-k items to keep track of
 	int	width;	// Width of field
 	int	depth;	// Depth of field
-	int*	hashes;
-	int*	field;	// Int field -- width * depth length
+	long*	hashes; // Array of random integers to use for hash seeds
+	long*	field;	// Int field -- width * depth length
 	heap_t*	heap;	// Heap for sorting
-	map_t* top_k;
+	map_t* top_k;	// Dictionary of top K entries
 } sketch_t;
 
-sketch_t* sketch_create(size_t data_size, double delta, double epsilon, int k, comparator cmp);
+sketch_t* sketch_create(double delta, double epsilon, int k);
 void sketch_destroy(sketch_t *s);
 
 #endif

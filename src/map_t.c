@@ -61,7 +61,7 @@ map_t* map_create(float load_factor,
 		  dtor destructor)
 {
 
-	if(initial_bucket_count == NULL) {
+	if(initial_bucket_count == 0) {
 		initial_bucket_count = DEFAULT_BUCKET_COUNT;
 	}
 

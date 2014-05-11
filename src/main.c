@@ -17,7 +17,7 @@ int main(int argc, const char * argv[])
 {
 
 	printf("Starting\n");
-	sketch_t *s = sketch_create(sizeof(int), 0.5, 0.5, 1.0, int_cmp_asc);
+	sketch_t *s = sketch_create(0.5, 0.5, 100);
 	
 	if(s == NULL) {
 		printf("Error creating sketch");
